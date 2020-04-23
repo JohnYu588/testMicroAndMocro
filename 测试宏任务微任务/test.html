@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      #outer {
+        padding: 20px;
+        background: #616161;
+      }
+
+      #inner {
+        width: 100px;
+        height: 100px;
+        background: #757575;
+      }
+    </style>
+
+    <div id="outer">
+      <div id="inner"></div>
+    </div>
+    <script>
+      const $inner = document.querySelector('#inner');
+      const $outer = document.querySelector('#outer');
+
+      function handler() {
+        //demo2---------------------
+        // setTimeout(() => {
+        //   console.log('setTimeout1');
+        // }, 0);
+        // let p = new Promise((resolve, reject) => {
+        //   console.log('Promise1');
+        //   resolve();
+        // });
+        // p.then(() => {
+        //   console.log('Promise2');
+        // });
+        //demo3---------------
+        // Promise.resolve().then(() => {
+        //   console.log('Promise1');
+        //   setTimeout(() => {
+        //     console.log('setTimeout2');
+        //   }, 0);
+        // });
+
+        // setTimeout(() => {
+        //   console.log('setTimeout1');
+        //   Promise.resolve().then(() => {
+        //     console.log('Promise2');
+        //   });
+        // }, 0);
+        //demo5-------------
+        console.log('1');
+
+        setTimeout(function () {
+          //宏
+          console.log('2');
+          process.nextTick(function () {
+            console.log('3');
+          });
+          new Promise(function (resolve) {
+            console.log('4');
+            resolve();
+          }).then(function () {
+            console.log('5');
+          });
+        });
+        process.nextTick(function () {
+          //微
+          console.log('6');
+        });
+        new Promise(function (resolve) {
+          //1，7，6，8，2，4，3，5，9，11，10，12  vscode和Mac终端(我按照楼主演算)
+          //1 7 6 8 2 4 9 11 3 10 5 12  macos系统的终端执行
+          console.log('7');
+          resolve();
+        }).then(function () {
+          console.log('8'); //微
+        });
+
+        setTimeout(function () {
+          //宏
+          console.log('9');
+          process.nextTick(function () {
+            console.log('10');
+          });
+          new Promise(function (resolve) {
+            console.log('11');
+            resolve();
+          }).then(function () {
+            console.log('12');
+          });
+        });
+        //demo4--------------
+        // setTimeout((_) => console.log(4));
+
+        // new Promise((resolve) => {
+        //   resolve();
+        //   console.log(1);
+        // }).then((_) => {
+        //   console.log(3);
+        // });
+
+        // console.log(2);
+        //demo1-----------------
+        // console.log('click'); // 直接输出
+        // Promise.resolve().then((_) => console.log('promise')); // 注册微任务
+        // setTimeout((_) => console.log('timeout')); // 注册宏任务
+        // requestAnimationFrame((_) => console.log('animationFrame')); // 注册宏任务
+        // $outer.setAttribute('data-random', Math.random()); // DOM属性修改，触发微任务
+      }
+      //demo1------------------
+      //   new MutationObserver((_) => {
+      //     console.log('observer');
+      //   }).observe($outer, {
+      //     attributes: true,
+      //   });
+
+      $inner.addEventListener('click', handler);
+      //demo1-----------------
+      //   $outer.addEventListener('click', handler);
+    </script>
+  </body>
+</html>
